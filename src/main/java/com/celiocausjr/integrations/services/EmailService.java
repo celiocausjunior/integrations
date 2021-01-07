@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.celiocausjr.integrations.dto.EmailDTO;
+import com.celiocausjr.integrations.services.exceptions.EmailException;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -41,6 +42,8 @@ public class EmailService {
 			Response response = sendGrid.api(request);
 			if (response.getStatusCode() >= 400 && response.getStatusCode() <= 500) {
 				LOG.error("Error sending email: " + response.getBody());
+			throw new EmailException(response.getBody());
+			
 			}
 			
 			else {
@@ -48,7 +51,7 @@ public class EmailService {
 			}
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			throw new EmailException(e.getMessage());
 		}
 
 	}
